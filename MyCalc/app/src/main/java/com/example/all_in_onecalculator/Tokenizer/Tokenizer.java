@@ -17,89 +17,35 @@ public class Tokenizer {
 
         while (mIndex < mLen) {
             char c = mText.charAt(mIndex);
-            if (Character.isLetter(c)) mTokens.add(identifyTrigonometryOp());
+            if (Character.isLetter(c)) mTokens.add(identifyMiscOp());
             else if (Character.isDigit(c)) mTokens.add(identifyNumbers());
             else if (isOperator(c)) mTokens.add(identifyOperators());
             else advance();
         }
     }
 
-    private Token identifyTrigonometryOp() {
+    private Token identifyMiscOp() {
         Token token = new Token();
-        token.setTokenType(TokenType.NUMBER);
-        StringBuilder sb = new StringBuilder();
-        switch (peek()){
-            case 's': sb.append(evaluateSIN());break;
-            case 'c': sb.append(evaluateCOS()); break;
-            case 't': sb.append(evaluateTAN()); break;
-            case 'l': sb.append(evaluateLOG()); break;
+        token.misOp = true;
+        switch (peek()) {
+            case 's': token.setTokenType(TokenType.SIN);mIndex += 3;break;
+            case 'c': token.setTokenType(TokenType.COS);mIndex += 3;break;
+            case 't': token.setTokenType(TokenType.TAN);mIndex += 3;break;
+            case 'l':
+                advance();
+                if (peek() == 'o') {
+                    token.setTokenType(TokenType.LOG);
+                    mIndex += 2;
+                }
+                else {
+                    token.setTokenType(TokenType.ln);
+                    mIndex ++;
+                }
+                break;
         }
-        advance();
-        token.setValue(Float.parseFloat(sb.toString()));
-        return token;
+       return token;
     }
 
-    private String evaluateSIN() {
-        mIndex += 4;
-        String arg = "";
-        char ch;
-        while(mIndex < mLen && (ch=peek())!=')') {
-            arg += ch;
-            advance();
-        }
-        double temp = Math.toRadians(Double.parseDouble(arg));
-        float res = (float) Math.sin(temp);
-        return Float.toString(res);
-    }
-    private String evaluateCOS() {
-        mIndex += 4;
-        String arg = "";
-        char ch;
-        while(mIndex < mLen && (ch=peek())!=')') {
-            arg += ch;
-            advance();
-        }
-        double temp = Math.toRadians(Double.parseDouble(arg));
-        float res = (float) Math.cos(temp);
-        return Float.toString(res);
-    }
-    private String evaluateTAN() {
-        mIndex += 4;
-        String arg = "";
-        char ch;
-        while(mIndex < mLen && (ch=peek())!=')') {
-            arg += ch;
-            advance();
-        }
-        double temp = Math.toRadians(Double.parseDouble(arg));
-        float res = (float) Math.tan(temp);
-        return Float.toString(res);
-    }
-    private String evaluateLOG() {
-        advance();
-        String arg = "";
-        char ch;
-        if (peek() == 'o') {
-            mIndex = mIndex + 3;
-
-            while (mIndex < mLen && ((ch = peek())!= ')')) {
-                arg += ch;
-                advance();
-            }
-            double temp = Double.parseDouble(arg);
-            float res = (float) Math.log10(temp);
-            return Float.toString(res);
-        }
-        else {
-            while (mIndex < mLen && ((ch = peek())!= ')')) {
-                arg += ch;
-                advance();
-            }
-            double temp = Double.parseDouble(arg);
-            float res = (float) Math.log(temp);
-            return Float.toString(res);
-        }
-    }
 
     private Token identifyNumbers() {
         Token token = new Token();
@@ -124,6 +70,11 @@ public class Tokenizer {
         case '/': token.setTokenType(TokenType.DIV);break;
         case '(': token.setTokenType(TokenType.LEFT_PAREN);break;
         case ')': token.setTokenType(TokenType.RIGHT_PAREN);break;
+        case '√': token.setTokenType(TokenType.Sqrt);break;
+        case '∛': token.setTokenType(TokenType.CUBErt);break;
+        case '^': token.setTokenType(TokenType.POW);break;
+        case '!': token.setTokenType(TokenType.FACT);break;
+        case '%': token.setTokenType(TokenType.PERC);break;
         
     }
     advance();
@@ -139,6 +90,11 @@ public class Tokenizer {
             case '/':
             case ')':
             case '(':
+            case '√':
+            case '∛':
+            case '^':
+            case '!':
+            case '%':
                 return true;
         }
         return  false;
@@ -153,3 +109,6 @@ public class Tokenizer {
 
 
 }
+
+
+

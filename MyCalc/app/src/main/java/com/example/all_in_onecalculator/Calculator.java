@@ -3,11 +3,19 @@ package com.example.all_in_onecalculator;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.all_in_onecalculator.Interpreter.Evaluator;
+import com.example.all_in_onecalculator.Parser.Parser;
+import com.example.all_in_onecalculator.Tokenizer.Token;
+import com.example.all_in_onecalculator.Tokenizer.Tokenizer;
+
+import java.util.ArrayList;
 
 public class Calculator extends AppCompatActivity {
 
@@ -17,6 +25,8 @@ public class Calculator extends AppCompatActivity {
     ImageView mDel;
     TextView mSin,mCos,mTan,mLog,mLn,mlb,mrb,mPow,mSqrt,mFact,mPi,mE,mCubeRt,mDEG,mRAD;
     int count = 0;
+    Evaluator evaluator = new Evaluator();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +57,12 @@ public class Calculator extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 CharSequence s =  mText.getText();
-                if(s.length()>0)
-                    mText.setText(s.subSequence(0,s.length()-1));
+                if(s.length()>0) {
+                    mText.setText(s.subSequence(0, s.length() - 1));
                     count--;
                     enable_disableButtons(true);
+                }
+                  mResultBar.setText("");
             }
         });
 
@@ -81,10 +93,12 @@ public class Calculator extends AppCompatActivity {
             if (mRAD.getTextColors() == getResources().getColorStateList(R.color.deg_rad_color_enable)) {
                 mRAD.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_disable));
                 mDEG.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_enable));
+                evaluator.setIsDegree(true);
             }
             else {
                 mRAD.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_enable));
                 mDEG.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_disable));
+                evaluator.setIsDegree(false);
             }
             }
         });
@@ -94,10 +108,12 @@ public class Calculator extends AppCompatActivity {
                 if (mDEG.getTextColors() == getResources().getColorStateList(R.color.deg_rad_color_enable)) {
                     mDEG.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_disable));
                     mRAD.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_enable));
+                    evaluator.setIsDegree(false);
                 }
                 else {
                     mDEG.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_enable));
                     mRAD.setTextColor(getResources().getColorStateList(R.color.deg_rad_color_disable));
+                    evaluator.setIsDegree(true);
                 }
             }
         });
@@ -105,15 +121,21 @@ public class Calculator extends AppCompatActivity {
         mEquals.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                clearAll();
-                mResultBar.setText("Answer is:");
+//                clearAll();
+
+                calculate();
             }
         });
 
+    }
 
-
-
-
+    private void calculate() {
+        Tokenizer tokenizer = new Tokenizer(mText.getText().toString());
+        ArrayList<Token> tokens = tokenizer.getTokens();
+        Parser parser = new Parser(tokens);
+        ArrayList<Token> postfix = parser.parse();
+        float result = evaluator.eval(postfix);
+        mResultBar.setText(new StringBuilder().append(result));
     }
 
     private void clearAll() {
@@ -259,6 +281,8 @@ public class Calculator extends AppCompatActivity {
 //        mCubeRt.setTextColor(tv_color);
 
     }
+
+
 
 
 }

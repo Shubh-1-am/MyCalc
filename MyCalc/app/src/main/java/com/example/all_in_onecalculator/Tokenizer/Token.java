@@ -22,11 +22,11 @@ public class Token {
         mValue = value;
     }
 
-    public boolean isMisOp() {
+    public boolean isOperator() {
         return misOp;
     }
 
-    public void setMisOp(boolean misOp) {
+    public void setIsOp(boolean misOp) {
         this.misOp = misOp;
     }
 }

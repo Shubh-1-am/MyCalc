@@ -8,5 +8,15 @@ public enum TokenType {
     MUL,
     DIV,
     LEFT_PAREN,
-    RIGHT_PAREN
+    RIGHT_PAREN,
+    SIN,
+    COS,
+    TAN,
+    POW,
+    LOG,
+    ln,
+    Sqrt,
+    CUBErt,
+    FACT,
+    PERC
 }
