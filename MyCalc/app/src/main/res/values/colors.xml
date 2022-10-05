@@ -11,4 +11,5 @@
     <color name="bg">#1a1a1a</color>
     <color name="deg_rad_color_enable">#69EB69</color>
     <color name="deg_rad_color_disable">#BDD0DD</color>
+    <color name="btn_color">#57F6E7</color>
 </resources>
