@@ -2,12 +2,12 @@ package com.example.all_in_onecalculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Calculator extends AppCompatActivity {
 
@@ -16,7 +16,7 @@ public class Calculator extends AppCompatActivity {
     Button m00,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mAdd,mSub,mMul,mDiv,mPer,mClearAll,mDot,mEquals;
     ImageView mDel;
     TextView mSin,mCos,mTan,mLog,mLn,mlb,mrb,mPow,mSqrt,mFact,mPi,mE,mCubeRt,mDEG,mRAD;
-
+    int count = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,12 +35,12 @@ public class Calculator extends AppCompatActivity {
         m8.setOnClickListener(v -> append("8"));
         m9.setOnClickListener(v -> append("9"));
 
-        mDot.setOnClickListener(v -> checkDuplicacyThenAppend("."));
-        mPer.setOnClickListener(v -> checkDuplicacyThenAppend("%"));
-        mDiv.setOnClickListener(v -> checkDuplicacyThenAppend("/"));
-        mMul.setOnClickListener(v -> checkDuplicacyThenAppend("*"));
-        mSub.setOnClickListener(v -> checkDuplicacyThenAppend("-"));
-        mAdd.setOnClickListener(v -> checkDuplicacyThenAppend("+"));
+        mDot.setOnClickListener(v -> checkDuplicateThenAppend("."));
+        mPer.setOnClickListener(v -> checkDuplicateThenAppend("%"));
+        mDiv.setOnClickListener(v -> checkDuplicateThenAppend("/"));
+        mMul.setOnClickListener(v -> checkDuplicateThenAppend("*"));
+        mSub.setOnClickListener(v -> checkDuplicateThenAppend("-"));
+        mAdd.setOnClickListener(v -> checkDuplicateThenAppend("+"));
 
         mClearAll.setOnClickListener(v -> clearAll());
         mDel.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +49,16 @@ public class Calculator extends AppCompatActivity {
                 CharSequence s =  mText.getText();
                 if(s.length()>0)
                     mText.setText(s.subSequence(0,s.length()-1));
+                    count--;
+                    enable_disableButtons(true);
+            }
+        });
+
+        mDel.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                clearAll();
+                return true;
             }
         });
 
@@ -92,7 +102,13 @@ public class Calculator extends AppCompatActivity {
             }
         });
 
-
+        mEquals.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearAll();
+                mResultBar.setText("Answer is:");
+            }
+        });
 
 
 
@@ -100,13 +116,31 @@ public class Calculator extends AppCompatActivity {
 
     }
 
-    private void clearAll() {mText.setText("");}
+    private void clearAll() {
+        mText.setText("");
+        mResultBar.setText("");
+        count = 0;
+        enable_disableButtons(true);
+    }
 
-    private void checkDuplicacyThenAppend(String s) {
+    private void checkDuplicateThenAppend(String s) {
+        if (count == 56) {
+            Toast.makeText(this, "Text limit exceeded!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!mResultBar.getText().toString().isEmpty()){
+            mResultBar.setText("");
+        }
         CharSequence cs = mText.getText();
-        if(cs.length()==0) append(s);
+        if(cs.length()==0) {
+            append(s);
+            count++;
+        }
         else if(cs.charAt(cs.length()-1)==s.charAt(0)) return;
-        else{append(s);}
+        else{
+            append(s);
+            count++;
+        }
     }
 
     private void findView() {
@@ -150,6 +184,81 @@ public class Calculator extends AppCompatActivity {
          mRAD = findViewById(R.id.tv_RAD);
     }
     private void append(String s){
+        if (count == 56) {
+            Toast.makeText(this, "Text limit exceeded!", Toast.LENGTH_SHORT).show();
+            enable_disableButtons(false);
+            return;
+        }
+
+        if(!mResultBar.getText().toString().isEmpty()){
+            mResultBar.setText("");
+        }
+
         mText.append(s);
+        count++;
     }
+
+    private void enable_disableButtons(boolean b) {
+
+//        ColorStateList tv_color,btn_color;
+//        if (b) {
+//            tv_color = getResources().getColorStateList(R.color.white);
+//            btn_color = getResources().getColorStateList(R.color.btn_color);
+//        }
+//        tv_color = getResources().getColorStateList(R.color.deg_rad_color_disable);
+//        btn_color = getResources().getColorStateList(R.color.black);
+        m0.setEnabled(b);
+        m00.setEnabled(b);
+        m1.setEnabled(b);
+        m2.setEnabled(b);
+        m3.setEnabled(b);
+        m4.setEnabled(b);
+        m5.setEnabled(b);
+        m6.setEnabled(b);
+        m7.setEnabled(b);
+        m8.setEnabled(b);
+        m9.setEnabled(b);
+        mDot.setEnabled(b);
+//        mDot.setTextColor(btn_color);
+        mAdd.setEnabled(b);
+//        mAdd.setTextColor(btn_color);
+        mSub.setEnabled(b);
+//        mSub.setTextColor(btn_color);
+        mMul.setEnabled(b);
+//        mMul.setTextColor(btn_color);
+        mDiv.setEnabled(b);
+//        mDiv.setTextColor(btn_color);
+        mPer.setEnabled(b);
+//        mPer.setTextColor(btn_color);
+
+        mSin.setEnabled(b);
+//        mSin.setTextColor(tv_color);
+        mCos.setEnabled(b);
+//        mCos.setTextColor(tv_color);
+        mTan.setEnabled(b);
+//        mTan.setTextColor(tv_color);
+        mLog.setEnabled(b);
+//        mLog.setTextColor(tv_color);
+        mLn.setEnabled(b);
+//        mLn.setTextColor(tv_color);
+        mlb.setEnabled(b);
+//        mlb.setTextColor(tv_color);
+        mrb.setEnabled(b);
+//        mrb.setTextColor(tv_color);
+        mPow.setEnabled(b);
+//        mPow.setTextColor(tv_color);
+        mSqrt.setEnabled(b);
+//        mSqrt.setTextColor(tv_color);
+        mFact.setEnabled(b);
+//        mFact.setTextColor(tv_color);
+        mPi.setEnabled(b);
+//        mPi.setTextColor(tv_color);
+        mE.setEnabled(b);
+//        mE.setTextColor(tv_color);
+        mCubeRt.setEnabled(b);
+//        mCubeRt.setTextColor(tv_color);
+
+    }
+
+
 }
