@@ -2,6 +2,7 @@ package com.example.all_in_onecalculator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -84,8 +85,8 @@ public class Calculator extends AppCompatActivity {
         mPow.setOnClickListener( v -> append("^"));
         mSqrt.setOnClickListener( v -> append("√"));
         mFact.setOnClickListener( v -> append("!"));
-//        mPi.setOnClickListener( v -> append(Double.toString(Math.PI)));
-        mE.setOnClickListener( v -> append(Double.toString(Math.E)));
+        mPi.setOnClickListener( v -> append("π"));
+        mE.setOnClickListener( v -> append("e"));
         mCubeRt.setOnClickListener( v -> append("∛"));
         mRAD.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,12 +131,28 @@ public class Calculator extends AppCompatActivity {
     }
 
     private void calculate() {
-        Tokenizer tokenizer = new Tokenizer(mText.getText().toString());
-        ArrayList<Token> tokens = tokenizer.getTokens();
-        Parser parser = new Parser(tokens);
-        ArrayList<Token> postfix = parser.parse();
-        float result = evaluator.eval(postfix);
-        mResultBar.setText(new StringBuilder().append(result));
+        if (!isParanthesisBalanced(mText.getText().toString())) {
+            mResultBar.setTextColor(getResources().getColorStateList(R.color.red));
+            mResultBar.setText(new StringBuilder().append("Invalid Expression!"));
+        } else {
+            Tokenizer tokenizer = new Tokenizer(mText.getText().toString());
+            ArrayList<Token> tokens = tokenizer.getTokens();
+            Parser parser = new Parser(tokens);
+            ArrayList<Token> postfix = parser.parse();
+            float result = evaluator.eval(postfix);
+            mResultBar.setTextColor(getResources().getColorStateList(R.color.blue));
+            mResultBar.setText(new StringBuilder().append(result));
+        }
+    }
+
+    private boolean isParanthesisBalanced(String exp) {
+        int lp = 0;
+        int rp = 0;
+        for (int i = 0 ; i < exp.length(); i++){
+            if (exp.charAt(i) == '(') lp++;
+            else if (exp.charAt(i) == ')') rp++;
+        }
+        return lp == rp;
     }
 
     private void clearAll() {
