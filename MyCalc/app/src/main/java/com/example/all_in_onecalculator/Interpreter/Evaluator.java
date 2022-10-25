@@ -112,6 +112,7 @@ public class Evaluator {
             case DIV:
             case PLUS:
             case MINUS:
+            case PERC:
             case POW: return true;
         }
       return false;
