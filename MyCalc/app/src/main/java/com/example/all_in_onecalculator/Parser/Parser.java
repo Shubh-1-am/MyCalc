@@ -22,26 +22,46 @@ public class Parser {
         ArrayList<Token> postfix = new ArrayList<>();
         for(Token token : mTokens){
             if(token.isOperator()){
-                if(!mOperators.isEmpty()){
-
-                    if(token.getTokenType() == TokenType.RIGHT_PAREN){
-                        while (mOperators.peek().getTokenType() != TokenType.LEFT_PAREN){
-                            postfix.add(mOperators.pop());
-                        }
-                        mOperators.pop();
-                    }
-                    while (precedence(token) <= precedence(mOperators.peek())) {
+                if (mOperators.isEmpty() || (mOperators.peek().getTokenType() == TokenType.LEFT_PAREN)) {
+                    mOperators.add(token);
+                } else if (token.getTokenType() == TokenType.LEFT_PAREN) {
+                    mOperators.add(token);
+                } else if (token.getTokenType() == TokenType.RIGHT_PAREN) {
+                    while (mOperators.peek().getTokenType() != TokenType.LEFT_PAREN) {
                         postfix.add(mOperators.pop());
                     }
+                    mOperators.pop();
+                } else if (precedence(token) > precedence(mOperators.peek())) {
+                    mOperators.add(token);
+                } else if (token.getTokenType() != TokenType.POW && precedence(token) < precedence(mOperators.peek())) {
+                    postfix.add(mOperators.pop());
+                    while (!mOperators.isEmpty() && precedence(token) <= precedence(mOperators.peek()) && mOperators.peek().getTokenType() != TokenType.LEFT_PAREN){
+                        postfix.add(mOperators.pop());
+                    }
+                    mOperators.add(token);
+                } else if (token.getTokenType() != TokenType.POW && precedence(token) == precedence(mOperators.peek())) {
+                    postfix.add(mOperators.pop());
+                    mOperators.add(token);
+                } else if (token.getTokenType() == TokenType.POW && precedence(token) < precedence(mOperators.peek())) {
+                    postfix.add(mOperators.pop());
+                    while (!mOperators.isEmpty() && precedence(token) < precedence(mOperators.peek()) && mOperators.peek().getTokenType() != TokenType.LEFT_PAREN){
+                        postfix.add(mOperators.pop());
+                    }
+                    mOperators.add(token);
+                } else if (token.getTokenType() == TokenType.POW && precedence(token) == precedence(mOperators.peek())) {
+                    mOperators.add(token);
                 }
-                mOperators.add(token);
+
             } else {
                 postfix.add(token);
             }
         }
 
         while (!mOperators.empty()){
-            postfix.add(mOperators.pop());
+            if (mOperators.peek().getTokenType() == TokenType.LEFT_PAREN ||  mOperators.peek().getTokenType() == TokenType.RIGHT_PAREN) {
+                mOperators.pop();
+            } else
+                postfix.add(mOperators.pop());
         }
         return  postfix;
     }
