@@ -1,5 +1,7 @@
 package com.example.all_in_onecalculator.Tokenizer;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Tokenizer {
@@ -19,13 +21,34 @@ public class Tokenizer {
             char c = mText.charAt(mIndex);
             if (Character.isLetter(c)) mTokens.add(identifyMiscOp());
             else if (Character.isDigit(c)) mTokens.add(identifyNumbers());
+//            else if (isPI(c)) mTokens.add(identifyPI());
             else if (isOperator(c)) mTokens.add(identifyOperators());
             else advance();
         }
     }
 
+//    private Token identifyPI() {
+//        Token token = new Token();
+//        token.setTokenType(TokenType.NUMBER);
+//        token.setValue((float) Math.PI);
+//
+//        advance();
+//
+//        return token;
+//    }
+//
+//    private boolean isPI(char c) {
+//        return c == 'π';
+//    }
+
     private Token identifyMiscOp() {
         Token token = new Token();
+        if (peek() == 'e') {
+            token.setTokenType(TokenType.NUMBER);
+            token.setValue((float) Math.E);
+            advance();
+            return token;
+        }
         token.misOp = true;
         switch (peek()) {
             case 's': token.setTokenType(TokenType.SIN);mIndex += 3;break;
