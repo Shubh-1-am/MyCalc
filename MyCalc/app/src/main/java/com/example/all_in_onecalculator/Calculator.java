@@ -140,8 +140,15 @@ public class Calculator extends AppCompatActivity {
             Parser parser = new Parser(tokens);
             ArrayList<Token> postfix = parser.parse();
             float result = evaluator.eval(postfix);
-            mResultBar.setTextColor(getResources().getColorStateList(R.color.blue));
-            mResultBar.setText(new StringBuilder().append(result));
+            if (result == Float.MIN_VALUE){
+                mResultBar.setTextColor(getResources().getColorStateList(R.color.red));
+                mResultBar.setText(new StringBuilder().append("Invalid Expression!"));
+            }
+            else{
+                mResultBar.setTextColor(getResources().getColorStateList(R.color.blue));
+                mResultBar.setText(new StringBuilder().append(result));
+            }
+
         }
     }
 
