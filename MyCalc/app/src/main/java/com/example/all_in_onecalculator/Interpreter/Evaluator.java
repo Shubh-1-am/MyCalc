@@ -42,9 +42,11 @@ public class Evaluator {
            }  else {
                result.add(tokens.get(i).getValue());
            }
-           }
-        return result.peek();
         }
+        float answer =(float) ((float) Math.round(result.peek() * Math.pow(10, 6))
+                / Math.pow(10, 6));
+        return answer;
+    }
 
     private float operateUnaryOperator(float a, TokenType tokenType) {
         switch (tokenType) {
