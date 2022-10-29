@@ -19,33 +19,35 @@ public class Tokenizer {
 
         while (mIndex < mLen) {
             char c = mText.charAt(mIndex);
-            if (Character.isLetter(c)) mTokens.add(identifyMiscOp());
+
+            if (isPI(c)) mTokens.add(identifyPI());
+            else if (Character.isLetter(c)) mTokens.add(identifyMiscOp());
             else if (Character.isDigit(c)) mTokens.add(identifyNumbers());
-//            else if (isPI(c)) mTokens.add(identifyPI());
             else if (isOperator(c)) mTokens.add(identifyOperators());
             else advance();
         }
     }
 
-//    private Token identifyPI() {
-//        Token token = new Token();
-//        token.setTokenType(TokenType.NUMBER);
-//        token.setValue((float) Math.PI);
-//
-//        advance();
-//
-//        return token;
-//    }
-//
-//    private boolean isPI(char c) {
-//        return c == 'π';
-//    }
+    private Token identifyPI() {
+        Token token = new Token();
+        token.setTokenType(TokenType.NUMBER);
+        token.setValue((float) ((float) Math.round(Math.PI * Math.pow(10, 6))
+                        / Math.pow(10, 6)));
+        advance();
+
+        return token;
+    }
+
+    private boolean isPI(char c) {
+        return c == 'π';
+    }
 
     private Token identifyMiscOp() {
         Token token = new Token();
         if (peek() == 'e') {
             token.setTokenType(TokenType.NUMBER);
-            token.setValue((float) Math.E);
+            token.setValue((float) ((float) Math.round(Math.E * Math.pow(10, 6))
+                    / Math.pow(10, 6)));
             advance();
             return token;
         }
