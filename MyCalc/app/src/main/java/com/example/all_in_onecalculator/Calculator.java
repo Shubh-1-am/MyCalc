@@ -131,26 +131,32 @@ public class Calculator extends AppCompatActivity {
     }
 
     private void calculate() {
-        if (!isParanthesisBalanced(mText.getText().toString())) {
+        if (mText.getText().toString().isEmpty()) {
             mResultBar.setTextColor(getResources().getColorStateList(R.color.red));
-            mResultBar.setText(new StringBuilder().append("Invalid Expression!"));
+            mResultBar.setText(new StringBuilder().append(" Input Something! "));
         } else {
-            Tokenizer tokenizer = new Tokenizer(mText.getText().toString());
-            ArrayList<Token> tokens = tokenizer.getTokens();
-            Parser parser = new Parser(tokens);
-            ArrayList<Token> postfix = parser.parse();
-            float result = evaluator.eval(postfix);
-            if (result == Float.MIN_VALUE){
+            if (!isParanthesisBalanced(mText.getText().toString())) {
                 mResultBar.setTextColor(getResources().getColorStateList(R.color.red));
                 mResultBar.setText(new StringBuilder().append("Invalid Expression!"));
-            }
-            else{
-                mResultBar.setTextColor(getResources().getColorStateList(R.color.blue));
-                mResultBar.setText(new StringBuilder().append(result));
-            }
+            } else {
 
+                Tokenizer tokenizer = new Tokenizer(mText.getText().toString());
+                ArrayList<Token> tokens = tokenizer.getTokens();
+                Parser parser = new Parser(tokens);
+                ArrayList<Token> postfix = parser.parse();
+                float result = evaluator.eval(postfix);
+                if (result == Float.MIN_VALUE) {
+                    mResultBar.setTextColor(getResources().getColorStateList(R.color.red));
+                    mResultBar.setText(new StringBuilder().append("Invalid Expression!"));
+                } else {
+                    mResultBar.setTextColor(getResources().getColorStateList(R.color.blue));
+                    mResultBar.setText(new StringBuilder().append(result));
+                }
+
+            }
         }
     }
+
 
     private boolean isParanthesisBalanced(String exp) {
         int lp = 0;
