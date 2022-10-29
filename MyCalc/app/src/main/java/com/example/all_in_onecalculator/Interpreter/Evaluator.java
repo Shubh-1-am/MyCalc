@@ -9,7 +9,7 @@ import java.util.Stack;
 public class Evaluator {
 
 
-    private boolean isDeg;
+    private boolean isDeg = true;
 
     public boolean isDegree() {
         return isDeg;
@@ -24,8 +24,12 @@ public class Evaluator {
         for (int i = 0 ; i < tokens.size();i++){
            if (tokens.get(i).isOperator()){
                if (isBinaryOperator(tokens.get(i))){
+                   if (i == 1 && ((tokens.get(i).getTokenType() == TokenType.DIV) || (tokens.get(i).getTokenType() == TokenType.MUL) || (tokens.get(i).getTokenType() == TokenType.PLUS) || (tokens.get(i).getTokenType() == TokenType.POW) || (tokens.get(i).getTokenType() == TokenType.PERC) || (tokens.get(i).getTokenType() == TokenType.FACT))) {
+                       return Float.MIN_VALUE;
+                   }
                    float a = result.pop();
-                   float b = result.pop();
+                   float b = 0;
+                   if(!result.isEmpty()) { b = result.pop();}
                    float ans = operateBinaryOperator(a,b,tokens.get(i).getTokenType());
                    result.add(ans);
                }
